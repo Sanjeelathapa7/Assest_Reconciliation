@@ -1,3 +1,10 @@
+"""
+Unit tests for the rule engine, independent of the demo fixtures.
+
+These construct minimal records directly so each rule is tested in
+isolation, plus a couple of end-to-end tests through the agent using the
+shared demo fixtures as a regression check.
+"""
 
 import sys
 import os
@@ -111,7 +118,8 @@ class TestLogicalInconsistencyRule(unittest.TestCase):
             "A", event_time, "SHIPPED_OUT", ScanMethod.BARCODE, "SHIPPED_OUT", manifest_id="M-1"
         )
         decision = RuleEngine().decide(stale_pre_event_gps, inv, history, now=NOW)
-        
+        # Only one genuine post-event corroborating point exists, which is
+        # below the >=2 threshold for GPS to win -- inventory should win.
         self.assertEqual(decision.rule_id, "R1")
         self.assertEqual(decision.winner, SourceName.INVENTORY)
 
